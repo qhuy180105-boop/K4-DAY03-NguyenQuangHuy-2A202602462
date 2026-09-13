@@ -125,8 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
       testcases.forEach(tc => {
         const btn = document.createElement("button");
         btn.className = "chip-btn";
-        btn.innerHTML = `<strong>[${tc.id}]</strong> ${tc.type}`;
-        btn.title = tc.question;
+        btn.innerHTML = `<strong>[${tc.id}]</strong> ${tc.question}`;
+        btn.title = `Loại test: ${tc.type} (${tc.complexity})`;
         btn.addEventListener("click", () => {
           chatInput.value = tc.question;
           submitQuery(tc.question);

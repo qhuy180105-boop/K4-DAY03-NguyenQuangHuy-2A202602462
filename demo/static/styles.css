@@ -513,17 +513,27 @@ body {
   background: rgba(30, 41, 59, 0.8);
   color: var(--text-main);
   border: 1px solid var(--border-card);
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: normal;
+  max-width: 100%;
+}
+
+.chip-btn strong {
+  color: var(--accent-cyan);
+  margin-right: 0.25rem;
 }
 
 .chip-btn:hover {
   background: rgba(99, 102, 241, 0.25);
   border-color: var(--accent-indigo);
   color: #fff;
+  transform: translateY(-1px);
 }
 
 /* Chat Messages */
