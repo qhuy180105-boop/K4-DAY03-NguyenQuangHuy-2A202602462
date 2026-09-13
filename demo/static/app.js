@@ -40,7 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
       traceTabs.forEach(t => t.classList.remove("active"));
       traceViews.forEach(v => v.classList.remove("active"));
       tab.classList.add("active");
-      document.getElementById(targetView).classList.add("active");
+      const targetEl = document.getElementById(targetView) || document.getElementById("view-" + targetView);
+      if (targetEl) targetEl.classList.add("active");
+      if (targetView === "json-trace") {
+        loadWaterfallLog(false);
+      }
     });
   });
 
@@ -141,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 4. Fetch Waterfall JSON Log
   async function loadWaterfallLog(updateTimeline = false) {
     try {
-      const res = await fetch("/api/waterfall");
+      const res = await fetch("/api/waterfall?t=" + Date.now());
       if (!res.ok) return;
       const logs = await res.json();
       jsonTraceCode.textContent = JSON.stringify(logs, null, 2);

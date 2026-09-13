@@ -38,6 +38,12 @@ class DemoRequestHandler(SimpleHTTPRequestHandler):
         # In log rút gọn trên terminal
         sys.stdout.write(f"🌐 [DEMO SERVER] {self.address_string()} - {format % args}\n")
 
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        super().end_headers()
+
     def _send_json(self, data, status_code=200):
         body = json.dumps(data, ensure_ascii=False).encode('utf-8')
         self.send_response(status_code)
@@ -160,6 +166,21 @@ class DemoRequestHandler(SimpleHTTPRequestHandler):
                         final_answer = last_log.get("output", "")
                     else:
                         final_answer = f"Đã hoàn tất thực thi qua công cụ '{last_log.get('tool_name')}'."
+
+                # Persist trace logs to docs/trace_waterfall.json so /api/waterfall returns live updates
+                waterfall_path = os.path.join(BASE_DIR, "docs", "trace_waterfall.json")
+                try:
+                    existing_logs = []
+                    if os.path.exists(waterfall_path):
+                        with open(waterfall_path, "r", encoding="utf-8") as f:
+                            existing_logs = json.load(f)
+                    if not isinstance(existing_logs, list):
+                        existing_logs = []
+                    existing_logs.extend(trace_logs)
+                    with open(waterfall_path, "w", encoding="utf-8") as f:
+                        json.dump(existing_logs, f, ensure_ascii=False, indent=2)
+                except Exception as ex:
+                    sys.stderr.write(f"⚠️ Error saving trace waterfall: {ex}\n")
 
                 return self._send_json({
                     "status": "SUCCESS",

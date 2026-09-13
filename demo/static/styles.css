@@ -705,7 +705,10 @@ body {
   font-size: 0.78rem;
   color: #a5f3fc;
   overflow-x: auto;
-  max-height: 450px;
+  overflow-y: auto;
+  max-height: 480px;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .btn-sm {
