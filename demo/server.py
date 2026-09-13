@@ -24,9 +24,24 @@ from src.providers import get_llm_provider
 from src.app import run_react_agent
 from src.tools import TOOLS_SCHEMA
 
-# Khởi tạo singleton instances
+# Singleton instances
 mcp_server = MCPAcademicServer()
 provider = get_llm_provider()
+
+SESSION_WATERFALL_LOGS = []
+
+def get_waterfall_logs():
+    global SESSION_WATERFALL_LOGS
+    waterfall_path = os.path.join(BASE_DIR, "docs", "trace_waterfall.json")
+    if not SESSION_WATERFALL_LOGS and os.path.exists(waterfall_path):
+        try:
+            with open(waterfall_path, "r", encoding="utf-8") as f:
+                SESSION_WATERFALL_LOGS = json.load(f)
+        except Exception:
+            SESSION_WATERFALL_LOGS = []
+    if not isinstance(SESSION_WATERFALL_LOGS, list):
+        SESSION_WATERFALL_LOGS = []
+    return SESSION_WATERFALL_LOGS
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 
@@ -35,7 +50,6 @@ class DemoRequestHandler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
 
     def log_message(self, format, *args):
-        # In log rút gọn trên terminal
         sys.stdout.write(f"🌐 [DEMO SERVER] {self.address_string()} - {format % args}\n")
 
     def end_headers(self):
@@ -130,13 +144,8 @@ class DemoRequestHandler(SimpleHTTPRequestHandler):
                 return self._send_json([], status_code=404)
 
         elif path == "/api/waterfall":
-            waterfall_path = os.path.join(BASE_DIR, "docs", "trace_waterfall.json")
-            if os.path.exists(waterfall_path):
-                with open(waterfall_path, "r", encoding="utf-8") as f:
-                    logs = json.load(f)
-                return self._send_json(logs)
-            else:
-                return self._send_json([])
+            logs = get_waterfall_logs()
+            return self._send_json(logs)
 
         else:
             return super().do_GET()
@@ -167,18 +176,14 @@ class DemoRequestHandler(SimpleHTTPRequestHandler):
                     else:
                         final_answer = f"Đã hoàn tất thực thi qua công cụ '{last_log.get('tool_name')}'."
 
-                # Persist trace logs to docs/trace_waterfall.json so /api/waterfall returns live updates
+                # Accumulate trace logs both in memory and on disk
+                logs = get_waterfall_logs()
+                logs.extend(trace_logs)
+
                 waterfall_path = os.path.join(BASE_DIR, "docs", "trace_waterfall.json")
                 try:
-                    existing_logs = []
-                    if os.path.exists(waterfall_path):
-                        with open(waterfall_path, "r", encoding="utf-8") as f:
-                            existing_logs = json.load(f)
-                    if not isinstance(existing_logs, list):
-                        existing_logs = []
-                    existing_logs.extend(trace_logs)
                     with open(waterfall_path, "w", encoding="utf-8") as f:
-                        json.dump(existing_logs, f, ensure_ascii=False, indent=2)
+                        json.dump(logs, f, ensure_ascii=False, indent=2)
                 except Exception as ex:
                     sys.stderr.write(f"⚠️ Error saving trace waterfall: {ex}\n")
 

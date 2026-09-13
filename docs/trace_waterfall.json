@@ -6,5 +6,71 @@
     "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
     "output": "Chào bạn,\n\nĐể hỗ trợ chính xác nhất, bạn có thể cho mình biết cụ thể bạn muốn tìm hiểu về **Quy chế** nào không? Ví dụ:\n\n- **Quy chế đào tạo** (tổ chức nghiên cứu, học tập, xét tốt nghiệp...)?\n- **Quy chế học bổng**?\n- **Quy chế thi cử / đại học học phần**?\n- **Quy chế kỷ luật sinh viên**?\n\nNgoài ra, nếu bạn đang muốn tra cứu **hồ sơ học vụ cá nhân** (điểm, tín chỉ, năm học...) hoặc **đặt lịch hẹn tư vấn học vụ**, bạn hãy cung cấp cho mình **mã sinh viên** (ví dụ: SV2026001) để mình hỗ trợ tiếp nhé! 😊",
     "latency_ms": 2037.89
+  },
+  {
+    "step": 1,
+    "query": "Chào bạn, bạn có thể giới thiệu quy chế học vụ cơ bản của Đại học VinUni không?",
+    "action_type": "FINAL_ANSWER",
+    "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Chào bạn! VinUni là một đại học tư thục, phi lợi nhuận tại Việt Nam, với nền tảng đào tạo đặc thù. Vì vậy, đây là **tổng hợp các quy định học vụ cơ bản và thông lệ chung** trong hệ thống đào tạo của VinUni (các chi tiết cụ thể có thể thay đổi theo từng thời điểm, bạn nên đối chiếu với Văn bằng 2 - Quy chế đào tạo chính thức do nhà trường ban hành):\n\n---\n\n### 🎓 1. Khái niệm & Cấu trúc chương trình\n- **Cấp bậc**: VinUni đào tạo ở cấp **Đại học (4 năm)** và **Thạc sĩ**.\n- **Mô-đun tín chỉ**: Áp dụng hệ thống **tín chỉ** (credit-based), mỗi môn học quy đổi thành số tín chỉ nhất định.\n\n---\n\n### 📊 2. Điểm đánh giá & Thang điểm\n- **Thang điểm**: Thường sử dụng thang điểm **4.0** (hoặc 10 điểm tùy theo quy định từng giai đoạn/giảng viên trong hệ thống tín chỉ quốc tế hóa).\n- **Các loại điểm**:\n  - **Điểm trung bình học kỳ (GPA)**: Tính theo trọng số tín chỉ.\n  - **Điểm tích lũy (Cumulative GPA)**: Tích lũy qua các học kỳ.\n  - **Điểm tối thiểu để đạt yêu cầu môn học**:通常为 ≥ 2.0 (trên thang 4.0) hoặc ≥ 5 (trên thang 10) — sinh viên cần đạt mức này để được công nhận tín chỉ môn học.\n\n---\n\n### ⚖️ 3. Điều kiện lưu ban & Đương khoá\n- **Lưu ban (Academic Probation)**: Áp dụng khi **GPA tích lũy** của sinh viên **< 2.0** (trên thang 4.0) trong các kỳ liên tiếp. Sinh viên lưu ban phải tham gia chương trình hỗ trợ học tập chuyên biệt; nếu không cải thiện, có thể bị đình chỉ.\n- **Đình chỉ học (Suspension/Dismissal)**: Khi vi phạm kỷ luật học vụ nghiêm trọng (gian lận, quay cóp, nợ tín chỉ quá giới hạn cho phép v.v.).\n- **Mất tích / Ngừng học**: Sinh viên có thể xin **cho phép ngừng",
+    "latency_ms": 3906.96
+  },
+  {
+    "step": 1,
+    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "academic_query",
+    "arguments": {
+      "student_id": "SV2026001"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "student_id": "SV2026001",
+      "data": {
+        "full_name": "Nguyễn Văn An",
+        "class": "AI-K4",
+        "gpa": 3.85,
+        "email": "an.nv@vinuni.edu.vn",
+        "status": "Đang học",
+        "advisor": "PGS.TS Nguyễn Văn A"
+      }
+    },
+    "latency_ms": 480.94
+  },
+  {
+    "step": 2,
+    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
+    "output": "Kết quả tra cứu cho sinh viên SV2026001 (Nguyễn Văn An): Lớp AI-K4, GPA: 3.85, Email: an.nv@vinuni.edu.vn, Trạng thái: Đang học, Cố vấn: PGS.TS Nguyễn Văn A.",
+    "latency_ms": 10.0
+  },
+  {
+    "step": 1,
+    "query": "Hãy đặt lịch hẹn tư vấn học vụ cho sinh viên SV2026001 với cố vấn PGS.TS Nguyễn Văn A vào lúc 14:00 ngày 15/09/2026.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "schedule_appointment",
+    "arguments": {
+      "advisor_name": "PGS.TS Nguyễn Văn A",
+      "datetime_str": "14:00 15/09/2026",
+      "student_id": "SV2026001"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "booking_id": "BK-SV2026001-99",
+      "student_id": "SV2026001",
+      "datetime": "14:00 15/09/2026",
+      "advisor": "PGS.TS Nguyễn Văn A",
+      "message": "Đặt lịch thành công cho sinh viên SV2026001 với PGS.TS Nguyễn Văn A vào lúc 14:00 15/09/2026."
+    },
+    "latency_ms": 780.05
+  },
+  {
+    "step": 2,
+    "query": "Hãy đặt lịch hẹn tư vấn học vụ cho sinh viên SV2026001 với cố vấn PGS.TS Nguyễn Văn A vào lúc 14:00 ngày 15/09/2026.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
+    "output": "Đặt lịch thành công cho sinh viên SV2026001 với PGS.TS Nguyễn Văn A vào lúc 14:00 15/09/2026.",
+    "latency_ms": 10.0
   }
 ]
