@@ -191,9 +191,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Append Assistant Final Answer
       appendChatMessage("assistant", data.final_answer || "Đã hoàn tất xử lý.");
 
-      // Render Live ReAct Steps Timeline for this specific query
+      // Render Live ReAct Steps Timeline for this specific query (append mode to accumulate multiple test cases)
       if (data.trace_logs && data.trace_logs.length > 0) {
-        renderReActTimeline(data.trace_logs, data.total_latency_ms);
+        renderReActTimeline(data.trace_logs, true);
       }
 
       // Refresh Waterfall JSON viewer in background (without overwriting current live timeline)
@@ -205,16 +205,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Render ReAct Step-by-Step Timeline
-  function renderReActTimeline(logs, totalLatencyMs) {
+  // Render ReAct Step-by-Step Timeline (accumulates when append=true)
+  function renderReActTimeline(logs, append = false) {
     if (!logs || logs.length === 0) {
-      if (emptyTraceNotice) emptyTraceNotice.style.display = "block";
-      reactTimeline.innerHTML = "";
+      if (!append) {
+        if (emptyTraceNotice) emptyTraceNotice.style.display = "block";
+        reactTimeline.innerHTML = "";
+      }
       return;
     }
 
     if (emptyTraceNotice) emptyTraceNotice.style.display = "none";
-    reactTimeline.innerHTML = "";
+    if (!append) {
+      reactTimeline.innerHTML = "";
+    }
+
+    const firstQuery = logs[0] && logs[0].query ? logs[0].query : null;
+    if (append && firstQuery) {
+      const headerDiv = document.createElement("div");
+      headerDiv.className = "timeline-query-header";
+      headerDiv.style.cssText = "margin-top: 1rem; margin-bottom: 0.5rem; padding: 0.4rem 0.75rem; background: rgba(99, 102, 241, 0.15); border-left: 3px solid var(--accent-indigo); border-radius: 6px; font-size: 0.8rem; color: var(--accent-cyan); font-weight: 600;";
+      headerDiv.innerHTML = `📌 Session Trace: "${firstQuery}"`;
+      reactTimeline.appendChild(headerDiv);
+    }
 
     logs.forEach((log, index) => {
       const card = document.createElement("div");
@@ -268,6 +281,9 @@ document.addEventListener("DOMContentLoaded", () => {
       card.innerHTML = contentHTML;
       reactTimeline.appendChild(card);
     });
+
+    const traceView = document.getElementById("react-steps");
+    if (traceView) traceView.scrollTop = traceView.scrollHeight;
   }
 
   // Helper: Append Chat Message
