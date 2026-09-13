@@ -654,6 +654,9 @@ body {
   display: none;
   flex: 1;
   overflow-y: auto;
+  max-height: 520px;
+  min-height: 350px;
+  padding-right: 0.5rem;
 }
 
 .trace-view.active {

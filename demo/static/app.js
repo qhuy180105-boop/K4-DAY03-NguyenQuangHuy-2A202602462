@@ -139,13 +139,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 4. Fetch Waterfall JSON Log
-  async function loadWaterfallLog() {
+  async function loadWaterfallLog(updateTimeline = false) {
     try {
       const res = await fetch("/api/waterfall");
       if (!res.ok) return;
       const logs = await res.json();
       jsonTraceCode.textContent = JSON.stringify(logs, null, 2);
-      if (logs && logs.length > 0) {
+      if (updateTimeline && logs && logs.length > 0) {
         renderReActTimeline(logs);
       }
     } catch (e) {
@@ -187,11 +187,13 @@ document.addEventListener("DOMContentLoaded", () => {
       // Append Assistant Final Answer
       appendChatMessage("assistant", data.final_answer || "Đã hoàn tất xử lý.");
 
-      // Render Live ReAct Steps Timeline
-      renderReActTimeline(data.trace_logs, data.total_latency_ms);
+      // Render Live ReAct Steps Timeline for this specific query
+      if (data.trace_logs && data.trace_logs.length > 0) {
+        renderReActTimeline(data.trace_logs, data.total_latency_ms);
+      }
 
-      // Refresh Waterfall JSON viewer
-      loadWaterfallLog();
+      // Refresh Waterfall JSON viewer in background (without overwriting current live timeline)
+      loadWaterfallLog(false);
 
     } catch (e) {
       console.error("Error submitting query:", e);
@@ -293,10 +295,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Reload Waterfall log button
-  btnRefreshWaterfall.addEventListener("click", loadWaterfallLog);
+  btnRefreshWaterfall.addEventListener("click", () => loadWaterfallLog(true));
 
   // Initialize Data
   loadSystemInfo();
   loadTestCases();
-  loadWaterfallLog();
+  loadWaterfallLog(true);
 });
