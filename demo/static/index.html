@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VinUni AI Course - ReAct Agent Presentation & Web Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="brand-logo">🏫</div>
+      <div class="brand-titles">
+        <h1>VinUni AI Course — Day 03 Lab</h1>
+        <p class="brand-subtitle">Trợ lý Tác tử Học vụ ReAct Agent (MCP-Enhanced)</p>
+      </div>
+    </div>
+
+    <div class="header-meta">
+      <div class="student-badge">
+        <span class="badge-icon">👤</span>
+        <div>
+          <strong id="student-name">Nguyễn Quang Huy</strong>
+          <span id="student-id">MSSV: 2A202602462</span>
+        </div>
+      </div>
+      <div class="status-badge online">
+        <span class="pulse-dot"></span>
+        <span id="llm-model-name">Groq Qwen-3.8-27B (Live API)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Tabs (Bám sát 5 Mục Trình Bày trên Bảng) -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" data-tab="tab-overview">
+      <span class="tab-num">1 & 2</span>
+      <span>📌 Đề tài & Agentic Fit</span>
+    </button>
+    <button class="tab-btn" data-tab="tab-architecture">
+      <span class="tab-num">3 & 4</span>
+      <span>🏗️ Kiến trúc & Tools Registry</span>
+    </button>
+    <button class="tab-btn" data-tab="tab-demo">
+      <span class="tab-num">5</span>
+      <span>💬 Live Demo & ReAct Trace Log</span>
+    </button>
+  </nav>
+
+  <main class="app-container">
+
+    <!-- TAB 1: ĐỀ TÀI & AGENTIC FIT -->
+    <section id="tab-overview" class="tab-content active">
+      <div class="section-grid">
+        
+        <!-- Box 1: Chọn Đề tài gì & Tại sao -->
+        <div class="card card-glow">
+          <div class="card-header">
+            <span class="card-icon">🎓</span>
+            <h2>1. Đề tài Lựa chọn & Bối cảnh Bài toán</h2>
+          </div>
+          <div class="card-body">
+            <div class="topic-tag">Gợi ý 1.1 — Lĩnh vực Giáo dục & Đào tạo</div>
+            <h3 class="topic-title" id="topic-name">Trợ lý Học vụ & Tra cứu Lịch thi VinUni</h3>
+            <p class="topic-desc" id="topic-desc">
+              Giải quyết bài toán thực tế của sinh viên Đại học VinUni: tra cứu hồ sơ học vụ, điểm GPA, email cố vấn học tập và tự động thực hiện quy trình đặt lịch hẹn tư vấn học vụ thời gian thực qua giao thức Model Context Protocol (MCP).
+            </p>
+
+            <div class="rationale-box">
+              <h4>💡 Tại sao lại chọn bài toán này?</h4>
+              <ul>
+                <li><strong>Tránh ảo giác (Anti-Hallucination):</strong> Thông tin cá nhân sinh viên và điểm GPA không được tự bịa đặt mà phải tra cứu trực tiếp từ MCP Database.</li>
+                <li><strong>Hành động thực tế (Action Execution):</strong> Không chỉ dừng lại ở trả lời văn bản, Agent thực sự thực thi công cụ đặt lịch hẹn `schedule_appointment` xuất mã booking ID.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Box 2: Đánh giá Agentic Fit Scoring Matrix -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">📊</span>
+            <h2>2. Khung Đánh giá Agentic Fit (17 / 20 Điểm)</h2>
+          </div>
+          <div class="card-body">
+            <div class="score-banner">
+              <div class="score-number">17<span class="score-max">/20</span></div>
+              <div class="score-status">✅ Phù hợp 100% triển khai Agentic System (> 12/20)</div>
+            </div>
+
+            <div class="matrix-list" id="matrix-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: KIẾN TRÚC AGENT & TOOLS -->
+    <section id="tab-architecture" class="tab-content">
+      <div class="section-grid">
+
+        <!-- Architecture Diagram -->
+        <div class="card col-span-2">
+          <div class="card-header">
+            <span class="card-icon">🏗️</span>
+            <h2>3. Sơ đồ Kiến trúc ReAct Agent (MCP-Enhanced)</h2>
+          </div>
+          <div class="card-body">
+            <div class="arch-diagram">
+              <div class="arch-node client">
+                <div class="node-icon">💻</div>
+                <div class="node-title">Client Web UI / CLI</div>
+                <div class="node-sub">User Query Prompt</div>
+              </div>
+
+              <div class="arch-arrow">➔</div>
+
+              <div class="arch-node agent">
+                <div class="node-icon">🧠</div>
+                <div class="node-title">ReAct Agent Core</div>
+                <div class="node-sub">src/app.py (ReAct Loop)</div>
+              </div>
+
+              <div class="arch-arrow">⇆</div>
+
+              <div class="arch-node adapter">
+                <div class="node-icon">🔌</div>
+                <div class="node-title">Multi-Provider LLM</div>
+                <div class="node-sub">src/providers.py (Groq Qwen-3.8)</div>
+              </div>
+
+              <div class="arch-arrow">⇆</div>
+
+              <div class="arch-node mcp">
+                <div class="node-icon">🌐</div>
+                <div class="node-title">MCP Server</div>
+                <div class="node-sub">src/mcp_server.py (JSON-RPC)</div>
+              </div>
+
+              <div class="arch-arrow">➔</div>
+
+              <div class="arch-node tools">
+                <div class="node-icon">🛠️</div>
+                <div class="node-title">Backend Tools Layer</div>
+                <div class="node-sub">src/tools.py (Execution DB)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tools Registry -->
+        <div class="card col-span-2">
+          <div class="card-header">
+            <span class="card-icon">🛠️</span>
+            <h2>4. Danh sách Công cụ công bố qua MCP Server (Tools Specs)</h2>
+          </div>
+          <div class="card-body">
+            <div class="tools-grid" id="tools-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: LIVE DEMO & REACT TRACE LOG -->
+    <section id="tab-demo" class="tab-content">
+      <div class="demo-layout">
+
+        <!-- Left: Quick Test Cases & Chatbot Panel -->
+        <div class="chat-panel card">
+          <div class="card-header">
+            <span class="card-icon">💬</span>
+            <h2>5. Trò chuyện Trực tiếp với ReAct Agent</h2>
+          </div>
+          <div class="card-body chat-body-layout">
+
+            <!-- Quick Prompts / Test Cases Bar -->
+            <div class="quick-testcases">
+              <span class="quick-label">🚀 Bộ 5 Test Cases Thử Nghiệm:</span>
+              <div class="testcase-chips" id="testcase-chips">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+
+            <!-- Chat Output Messages Container -->
+            <div class="chat-messages" id="chat-messages">
+              <div class="message system-message">
+                <div class="msg-avatar">🤖</div>
+                <div class="msg-content">
+                  <p><strong>Xin chào! Tôi là Trợ lý Tác tử Học vụ VinUni (ReAct Agent).</strong></p>
+                  <p>Bạn có thể thử nhập câu hỏi tự do bên dưới hoặc bấm vào các nut Test Case để quan sát vòng lặp ReAct suy luận và gọi Tool qua MCP Server!</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <form class="chat-input-form" id="chat-form">
+              <input type="text" id="chat-input" placeholder="Nhập câu hỏi tra cứu hoặc đặt lịch (ví dụ: Hãy tra cứu sinh viên SV2026001)..." autocomplete="off">
+              <button type="submit" id="send-btn">
+                <span>Gửi</span>
+                <span class="btn-icon">🚀</span>
+              </button>
+            </form>
+
+          </div>
+        </div>
+
+        <!-- Right: Real-time ReAct Execution & Trace Log Panel -->
+        <div class="trace-panel card">
+          <div class="card-header">
+            <span class="card-icon">🔍</span>
+            <h2>Bảng Vết Thực Thi (ReAct Loop & Trace Log)</h2>
+            <button class="btn-sm" id="btn-refresh-waterfall">🔄 Reload Waterfall Log</button>
+          </div>
+          <div class="card-body trace-body-layout">
+            
+            <div class="trace-tabs">
+              <button class="trace-tab active" data-view="react-steps">🔄 Live ReAct Steps</button>
+              <button class="trace-tab" data-view="json-trace">📊 Waterfall JSON Log</button>
+            </div>
+
+            <!-- View 1: Real-time Step-by-Step Visualization -->
+            <div id="view-react-steps" class="trace-view active">
+              <div class="empty-trace" id="empty-trace-notice">
+                <p>⏳ Chưa có phiên suy luận nào. Hãy gửi 1 câu hỏi ở khung chat bên trái để xem chuỗi <code>Thought ➔ Action ➔ Observation ➔ Final Answer</code>!</p>
+              </div>
+              <div class="react-timeline" id="react-timeline">
+                <!-- Live Steps Rendered via JS -->
+              </div>
+            </div>
+
+            <!-- View 2: Waterfall JSON Log -->
+            <div id="view-json-trace" class="trace-view">
+              <pre class="code-block"><code id="json-trace-code">// Waterfall trace log sẽ xuất hiện tại đây...</code></pre>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>🎓 VINUNI AI COURSE — DAY 03 LAB: CHATBOT VS REACT AGENT (MCP ENHANCED)</p>
+    <p>Học viên: <strong>Nguyễn Quang Huy</strong> — MSSV: <strong>2A202602462</strong></p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

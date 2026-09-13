@@ -137,21 +137,28 @@ class GeminiProvider(BaseLLMProvider):
 
 class OpenAIProvider(BaseLLMProvider):
     """OpenAI Provider (Native Tool Calling với OpenAI SDK)"""
-    def __init__(self, api_key: str = None, model: str = None):
+    def __init__(self, api_key: str = None, model: str = None, base_url: str = None):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self.model_name = model or os.getenv("LLM_MODEL") or "gpt-4o-mini"
+        self.base_url = base_url or os.getenv("OPENAI_BASE_URL")
+
+    def _get_client(self):
+        from openai import OpenAI
+        kwargs = {"api_key": self.api_key}
+        if self.base_url:
+            kwargs["base_url"] = self.base_url
+        return OpenAI(**kwargs)
 
     def generate(self, prompt: str, system_prompt: str = "") -> str:
         if not self.api_key or self.api_key == "your_openai_api_key_here":
             return "[OpenAI Error]: Chưa cấu hình OPENAI_API_KEY trong file .env! Đang sử dụng chế độ Mock."
         try:
-            from openai import OpenAI
-            client = OpenAI(api_key=self.api_key)
+            client = self._get_client()
             messages = []
             if system_prompt:
                 messages.append({"role": "system", "content": system_prompt})
             messages.append({"role": "user", "content": prompt})
-            response = client.chat.completions.create(model=self.model_name, messages=messages)
+            response = client.chat.completions.create(model=self.model_name, messages=messages, max_tokens=500)
             return response.choices[0].message.content or ""
         except Exception as e:
             return f"[OpenAI Exception]: {str(e)}"
@@ -162,8 +169,7 @@ class OpenAIProvider(BaseLLMProvider):
             return MockOfflineProvider().generate_with_tools(prompt, tools_schema, system_prompt)
 
         try:
-            from openai import OpenAI
-            client = OpenAI(api_key=self.api_key)
+            client = self._get_client()
 
             tools = []
             for tool in tools_schema:
@@ -187,7 +193,8 @@ class OpenAIProvider(BaseLLMProvider):
                 model=self.model_name,
                 messages=messages,
                 tools=tools if tools else None,
-                tool_choice="auto" if tools else None
+                tool_choice="auto" if tools else None,
+                max_tokens=500
             )
 
             msg = response.choices[0].message
@@ -201,9 +208,10 @@ class OpenAIProvider(BaseLLMProvider):
                     "thought": f"OpenAI quyết định gọi công cụ '{call.function.name}' với tham số: {json.dumps(args, ensure_ascii=False)}"
                 }
             else:
+                text_content = msg.content or getattr(msg, 'reasoning', None) or ""
                 return {
                     "type": "text",
-                    "content": msg.content or "",
+                    "content": text_content,
                     "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ)."
                 }
         except Exception as e:
