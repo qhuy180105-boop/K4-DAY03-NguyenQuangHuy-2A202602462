@@ -145,6 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) return;
       const logs = await res.json();
       jsonTraceCode.textContent = JSON.stringify(logs, null, 2);
+      if (logs && logs.length > 0) {
+        renderReActTimeline(logs);
+      }
     } catch (e) {
       console.error("Failed to load waterfall log:", e);
     }
@@ -198,27 +201,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Render ReAct Step-by-Step Timeline
   function renderReActTimeline(logs, totalLatencyMs) {
-    if (!logs || logs.length === 0) return;
+    if (!logs || logs.length === 0) {
+      if (emptyTraceNotice) emptyTraceNotice.style.display = "block";
+      reactTimeline.innerHTML = "";
+      return;
+    }
 
-    emptyTraceNotice.style.display = "none";
+    if (emptyTraceNotice) emptyTraceNotice.style.display = "none";
     reactTimeline.innerHTML = "";
 
-    logs.forEach(log => {
+    logs.forEach((log, index) => {
       const card = document.createElement("div");
       card.className = "step-card";
 
       let badgeClass = "badge-thought";
-      let badgeText = `Step ${log.step}: Thought`;
+      let badgeText = `Step ${log.step || index + 1}: Thought`;
 
       if (log.action_type === "TOOL_EXECUTION") {
         badgeClass = "badge-action";
-        badgeText = `Step ${log.step}: Action Call -> ${log.tool_name}`;
+        badgeText = `Step ${log.step || index + 1}: Action Call -> ${log.tool_name}`;
       } else if (log.action_type === "FINAL_ANSWER") {
         badgeClass = "badge-final";
-        badgeText = `Step ${log.step}: Final Answer`;
+        badgeText = `Step ${log.step || index + 1}: Final Answer`;
       }
 
       let contentHTML = `<div class="step-badge ${badgeClass}">${badgeText}</div>`;
+
+      if (log.query) {
+        contentHTML += `<div style="font-size: 0.75rem; color: var(--accent-cyan); margin-bottom: 0.4rem;"><strong>📌 Query:</strong> "${log.query}"</div>`;
+      }
 
       if (log.thought) {
         contentHTML += `<p style="font-size: 0.85rem; color: #fff; margin-bottom: 0.5rem;"><strong>🧠 Thought:</strong> ${log.thought}</p>`;
